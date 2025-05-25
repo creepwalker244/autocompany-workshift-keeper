@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models import WorkShift, Break, DeliveryTrip
+from app.models.time_records import WorkShift, Break, DeliveryTrip
 
 class TimeCalculator:
     """ Класс для расчета времени работы сотрудника """
@@ -40,9 +40,9 @@ class TimeCalculator:
     async def _execute_scalar(self, query):
         """ Выполняет запрос и возвращает результат в виде int """
         result = await self.session.execute(query)
-        return result.scalar() or 0
+        return await result.scalar() or 0
         
     @staticmethod
     def seconds_to_hours(seconds: int) -> float:
-            
+        """ Преобразует секунды в часы с округлением до двух знаков после запятой """
         return round(seconds / 3600, 2) if seconds else 0.0
