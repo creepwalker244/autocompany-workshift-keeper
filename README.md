@@ -33,27 +33,25 @@ uvicorn app.app:app --reload
 4. Документация API
 Доступна после запуска сервера:
 
-Swagger UI: http://localhost:8000/docs
-ReDoc: http://localhost:8000/redoc
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
 5. Ключевые методы API
 Аутентификация
-POST /auth/register - Регистрация пользователя
-
-POST /auth/token - Получение JWT-токена
+- POST /auth/register - Регистрация пользователя
+- POST /auth/token - Получение JWT-токена
 
 Рабочие смены
-POST /work/work_shifts/ - Добавить смену (только для админов)
-
-GET /work/total_worked_time/ - Получить суммарное время работы
+- POST /work/work_shifts/ - Добавить смену (только для админов)
+- GET /work/total_worked_time/ - Получить суммарное время работы
 
 Перерывы и доставки
-POST /work/breaks/ - Зарегистрировать перерыв
-
-POST /work/delivery_trips/ - Добавить доставку
+- POST /work/breaks/ - Зарегистрировать перерыв
+- POST /work/delivery_trips/ - Добавить доставку
 
 7. Конфигурация
 Создайте файл .env в корне проекта:
-
+```
 DATABASE_URL=postgresql+asyncpg://user:password@localhost/dbname
 SECRET_KEY=your-secret-key
+```
