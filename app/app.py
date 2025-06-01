@@ -1,24 +1,34 @@
 from fastapi import FastAPI
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
-import os
+from fastapi.middleware.cors import CORSMiddleware
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost/dbname")
 
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
-async_session_maker = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+app = FastAPI(
+    title="WorkShift Keeper API",
+    description="API для учета рабочего времени сотрудников",
+    version="1.0.0",
+    openapi_tags=[
+        {
+            "name": "Authentication",
+            "description": "Эндпоинты для регистрации и аутентификации"
+        },
+        {
+            "name": "Work",
+            "description": "Операции с рабочим временем и доставками"
+        }
+    ]
+)
 
-Base = declarative_base()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-from .routes import router
+from app.routes.routes import router
+from app.routes.auth import router as auth_router
+#app.include_router(router)
 
-app = FastAPI()
-
-app.include_router(router)
-
-async def get_db():
-    async with async_session_maker() as db:
-        yield db
-        await db.close()
+app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+app.include_router(router, prefix="/work", tags=["Work"])
