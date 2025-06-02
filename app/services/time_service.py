@@ -7,30 +7,21 @@ class TimeCalculator:
     def __init__(self, session: AsyncSession):
         self.session = session
         
-    async def calculate_work_time(
-        self,
-        user_id: int,
-        start_date: datetime,
-        end_date: datetime
-    ) -> dict:
-        total_worked = await self._execute_scalar(
-            WorkShift.get_worked_seconds(user_id, start_date, end_date, self.session)
+    async def calculate_work_time(self, user_id: int, start: datetime, end: datetime):
+        # Рабочее время
+        work_seconds = await WorkShift.get_worked_seconds(
+            user_id, start, end, self.session
         )
-        
-        total_breaks = await self._execute_scalar(
-            Break.get_break_seconds(user_id, start_date, end_date, self.session)
+
+        # Перерывы
+        break_seconds = await Break.get_break_seconds(
+            user_id, start, end, self.session
         )
-        
-        total_deliveries = await self._execute_scalar(
-            DeliveryTrip.get_delivery_seconds(user_id, start_date, end_date, self.session)
-        )
-        
-        clean_work = max(total_worked - total_breaks, 0)
-        
+
         return {
-            "total_worked_hours": self.seconds_to_hours(total_worked),
-            "clean_work_hours": self.seconds_to_hours(clean_work),
-            "delivery_hours": self.seconds_to_hours(total_deliveries)
+            "total_worked_seconds": work_seconds - break_seconds,
+            "work_seconds": work_seconds,
+            "break_seconds": break_seconds
         }
         
     async def _execute_scalar(self, query):

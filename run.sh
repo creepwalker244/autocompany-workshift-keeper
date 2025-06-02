@@ -1,2 +1,1 @@
-#!/bin/bash
-uvicorn app:app --reload
+uvicorn app.app:app --workers 1 --host 0.0.0.0 --port 8000
